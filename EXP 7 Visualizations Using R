@@ -1,0 +1,75 @@
+# !apt-get install -y r-base
+# !pip install rpy2
+# %load_ext rpy2.ipython
+
+# Load data
+%%R
+data("airquality")
+aq <- na.omit(airquality)
+
+# Bar Plot
+ozone_avg <- tapply(aq$Ozone, aq$Month, mean)
+
+barplot(ozone_avg,
+        main = "Average Ozone by Month",
+        xlab = "Month",
+        ylab = "Ozone Level",
+        col = "skyblue",
+        border = "black")
+
+
+## Histogram
+%%R
+data("airquality")
+aq <- na.omit(airquality)
+
+hist(aq$Temp,
+     main = "Histogram of Temperature",
+     xlab = "Temperature",
+     col = "purple",
+     border = "black",
+     breaks = 10)
+
+## Boxplot
+
+%%R
+data("airquality")
+aq <- na.omit(airquality)
+
+boxplot(Ozone ~ Month,
+        data = aq,
+        main = "Ozone Distribution by Month",
+        xlab = "Month",
+        ylab = "Ozone",
+        col = "orange",
+        border = "black")
+
+## Scatter Plot
+%%R
+data("airquality")
+aq <- na.omit(airquality)
+
+plot(aq$Wind, aq$Ozone,
+     main = "Wind vs Ozone",
+     xlab = "Wind Speed",
+     ylab = "Ozone",
+     col = "red",
+     pch = 19)
+
+# Regression line
+abline(lm(Ozone ~ Wind, data = aq), col = "blue", lwd = 2)
+
+## Heatmap
+
+%%R
+data("airquality")
+aq <- na.omit(airquality)
+
+data_matrix <- as.matrix(aq[, c("Ozone", "Solar.R", "Wind", "Temp")])
+
+heatmap(data_matrix,
+        main = "Heatmap of Air Quality Data",
+        col = heat.colors(256),
+        scale = "column")
+
+
