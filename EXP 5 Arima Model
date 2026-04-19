@@ -1,0 +1,133 @@
+
+
+# Step 1: Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.arima.model import ARIMA
+
+# ============================================
+# Step 2: Load Dataset
+# ============================================
+
+df = pd.read_csv("DailyDelhiClimateTrain.csv")
+
+# Convert to datetime
+df['date'] = pd.to_datetime(df['date'])
+
+# Set index
+df.set_index('date', inplace=True)
+
+# 🔥 FIX: Explicitly set frequency to DAILY
+df = df.asfreq('D')
+
+data = df['meantemp']
+
+print("First 5 rows:\n", data.head())
+
+# ============================================
+# Step 3: Visualize Time Series
+# ============================================
+
+plt.figure(figsize=(10,5))
+plt.plot(data)
+plt.title("Original Time Series")
+plt.xlabel("Date")
+plt.ylabel("Temperature")
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 4: Check Stationarity (ADF Test)
+# ============================================
+
+result = adfuller(data.dropna())
+
+print("\nADF Statistic:", result[0])
+print("p-value:", result[1])
+
+# ============================================
+# Step 5: Differencing (Make Stationary)
+# ============================================
+
+data_diff = data.diff().dropna()
+
+plt.figure(figsize=(10,5))
+plt.plot(data_diff)
+plt.title("Differenced Time Series")
+plt.grid()
+plt.show()
+
+# ADF after differencing
+result_diff = adfuller(data_diff)
+
+print("\nADF After Differencing:")
+print("ADF Statistic:", result_diff[0])
+print("p-value:", result_diff[1])
+
+# ============================================
+# Step 6: ACF and PACF
+# ============================================
+
+plt.figure(figsize=(12,5))
+plot_acf(data_diff, lags=30)
+plt.show()
+
+plt.figure(figsize=(12,5))
+plot_pacf(data_diff, lags=30)
+plt.show()
+
+# ============================================
+# Step 7: Train-Test Split
+# ============================================
+
+train_size = int(len(data) * 0.8)
+train, test = data[:train_size], data[train_size:]
+
+# ============================================
+# Step 8: Build ARIMA Model
+# ============================================
+
+model = ARIMA(train, order=(1,1,1))
+model_fit = model.fit()
+
+print(model_fit.summary())
+
+# ============================================
+# Step 9: Forecast
+# ============================================
+
+forecast = model_fit.forecast(steps=len(test))
+
+# ============================================
+# Step 10: Plot Results
+# ============================================
+
+plt.figure(figsize=(12,6))
+plt.plot(train, label='Train')
+plt.plot(test, label='Test')
+plt.plot(test.index, forecast, label='Forecast', color='red')
+plt.title("ARIMA Forecast vs Actual")
+plt.legend()
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 11: Final Combined Plot
+# ============================================
+
+plt.figure(figsize=(12,6))
+plt.plot(data, label='Original Data')
+plt.plot(test.index, forecast, label='Predicted Data', color='red')
+plt.title("Final ARIMA Output")
+plt.legend()
+plt.grid()
+plt.show()
+
+# ============================================
+# END
+# ============================================
