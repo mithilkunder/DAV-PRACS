@@ -1,0 +1,152 @@
+
+
+# Step 1: Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_iris
+from wordcloud import WordCloud
+
+# ============================================
+# Step 2: Convert Dataset into DataFrame
+# ============================================
+
+iris_data = load_iris()
+
+df = pd.DataFrame(data=iris_data.data, columns=iris_data.feature_names)
+
+# Add species column
+df['species'] = iris_data.target_names[iris_data.target]
+
+print("Dataset Preview:")
+print(df.head())
+
+# ============================================
+# Step 3: Bar Plot
+# ============================================
+
+plt.figure(figsize=(8,5))
+sns.countplot(x='species', data=df)
+plt.title('Bar Plot: Count of Iris Species')
+plt.xlabel('Species')
+plt.ylabel('Count')
+plt.grid(axis='y')
+plt.show()
+
+# ============================================
+# Step 4: Pie Chart
+# ============================================
+
+species_counts = df['species'].value_counts()
+
+plt.figure(figsize=(8,6))
+plt.pie(species_counts, labels=species_counts.index, autopct='%1.1f%%', startangle=140)
+plt.title('Pie Chart: Distribution of Iris Species')
+plt.axis('equal')
+plt.show()
+
+# ============================================
+# Step 5: Box Plot
+# ============================================
+
+plt.figure(figsize=(8,5))
+sns.boxplot(x=df['petal length (cm)'])
+plt.title('Box Plot: Petal Length Distribution')
+plt.xlabel('Petal Length (cm)')
+plt.show()
+
+plt.figure(figsize=(10,6))
+sns.boxplot(x='species', y='petal length (cm)', data=df)
+plt.title('Box Plot: Petal Length by Species')
+plt.xlabel('Species')
+plt.ylabel('Petal Length (cm)')
+plt.show()
+
+# ============================================
+# Step 6: Histogram + PDF (KDE)
+# ============================================
+
+sns.FacetGrid(df, hue="species", height=5) \
+   .map(sns.histplot, "petal length (cm)", kde=True, stat="density", common_norm=False) \
+   .add_legend()
+
+plt.title("Histogram + PDF: Petal Length Distribution")
+plt.xlabel("Petal Length (cm)")
+plt.ylabel("Density")
+plt.show()
+
+# ============================================
+# Step 7: PDF & CDF
+# ============================================
+
+setosa = df[df['species'] == 'setosa']['petal length (cm)']
+
+counts, bin_edges = np.histogram(setosa, bins=10, density=True)
+
+pdf = counts
+cdf = np.cumsum(pdf)
+
+plt.figure(figsize=(10,6))
+plt.plot(bin_edges[1:], pdf, label='PDF', marker='o')
+plt.plot(bin_edges[1:], cdf, label='CDF', marker='o')
+plt.title('PDF & CDF: Setosa Petal Length')
+plt.xlabel('Petal Length (cm)')
+plt.ylabel('Probability')
+plt.legend()
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 8: Scatter Plot
+# ============================================
+
+plt.figure(figsize=(8,5))
+sns.scatterplot(data=df, x='sepal length (cm)', y='petal length (cm)', hue='species')
+plt.title('Scatter Plot: Sepal Length vs Petal Length')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Petal Length (cm)')
+plt.show()
+
+# ============================================
+# Step 9: Heatmap
+# ============================================
+
+numeric_df = df.select_dtypes(include=[np.number])
+corr = numeric_df.corr()
+
+plt.figure(figsize=(8,6))
+sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
+plt.title("Heatmap: Correlation Matrix")
+plt.show()
+
+# ============================================
+# Step 10: Line Chart
+# ============================================
+
+# Sort values for smooth line
+df_sorted = df.sort_values(by='petal length (cm)')
+
+plt.figure(figsize=(10,6))
+plt.plot(df_sorted['petal length (cm)'], df_sorted['petal width (cm)'], marker='o')
+
+plt.title('Line Chart: Petal Length vs Petal Width (Sorted)')
+plt.xlabel('Petal Length (cm)')
+plt.ylabel('Petal Width (cm)')
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 11: Word Cloud
+# ============================================
+
+text_data = " ".join(df['species'])
+
+wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text_data)
+
+plt.figure(figsize=(10,5))
+plt.imshow(wordcloud, interpolation='bilinear')
+plt.axis("off")
+plt.title('Word Cloud: Iris Species Frequency')
+plt.show()
+
