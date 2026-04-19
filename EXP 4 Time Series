@@ -1,0 +1,212 @@
+
+
+
+# Step 1: Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# ============================================
+# Step 2: Load Dataset
+# ============================================
+
+# Download from Kaggle and place CSV in same folder
+df = pd.read_csv("DailyDelhiClimateTrain.csv")
+
+print("First 5 rows:\n", df.head())
+
+# ============================================
+# Step 3: Indexing (Convert to Datetime)
+# ============================================
+
+df['date'] = pd.to_datetime(df['date'])
+df.set_index('date', inplace=True)
+
+print("\nData after indexing:\n", df.head())
+
+# ============================================
+# Step 4: Plot Original Time Series
+# ============================================
+
+plt.figure(figsize=(10,5))
+plt.plot(df['meantemp'])
+plt.title("Mean Temperature Over Time")
+plt.xlabel("Date")
+plt.ylabel("Temperature")
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 5: Time Resampling
+# (Monthly Average)
+# ============================================
+
+monthly_data = df['meantemp'].resample('ME').mean()
+
+plt.figure(figsize=(10,5))
+plt.plot(monthly_data)
+plt.title("Monthly Average Temperature")
+plt.xlabel("Date")
+plt.ylabel("Temperature")
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 6: Rolling Mean (Moving Average)
+# ============================================
+
+rolling_mean = df['meantemp'].rolling(window=30).mean()
+
+plt.figure(figsize=(10,5))
+plt.plot(df['meantemp'], label='Original')
+plt.plot(rolling_mean, label='Rolling Mean (30 days)')
+plt.legend()
+plt.title("Rolling Mean Analysis")
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 7: Rolling Std (Stability Check)
+# ============================================
+
+rolling_std = df['meantemp'].rolling(window=30).std()
+
+plt.figure(figsize=(10,5))
+plt.plot(rolling_std)
+plt.title("Rolling Standard Deviation")
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 8: Decomposition (Trend, Seasonality)
+# ============================================
+
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+decomposition = seasonal_decompose(df['meantemp'], model='additive')
+
+decomposition.plot()
+plt.show()
+
+# ============================================
+# Step 9: Final Combined Plot
+# ============================================
+
+plt.figure(figsize=(12,6))
+plt.plot(df['meantemp'], label='Original')
+plt.plot(rolling_mean, label='Rolling Mean')
+plt.title("Final Time Series Visualization")
+plt.legend()
+plt.grid()
+plt.show()
+
+# ============================================
+# END
+# ============================================# ============================================
+# EXPERIMENT 4: TIME SERIES ANALYSIS
+# ============================================
+
+# Step 1: Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# ============================================
+# Step 2: Load Dataset
+# ============================================
+
+# Download from Kaggle and place CSV in same folder
+df = pd.read_csv("DailyDelhiClimateTrain.csv")
+
+print("First 5 rows:\n", df.head())
+
+# ============================================
+# Step 3: Indexing (Convert to Datetime)
+# ============================================
+
+df['date'] = pd.to_datetime(df['date'])
+df.set_index('date', inplace=True)
+
+print("\nData after indexing:\n", df.head())
+
+# ============================================
+# Step 4: Plot Original Time Series
+# ============================================
+
+plt.figure(figsize=(10,5))
+plt.plot(df['meantemp'])
+plt.title("Mean Temperature Over Time")
+plt.xlabel("Date")
+plt.ylabel("Temperature")
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 5: Time Resampling
+# (Monthly Average)
+# ============================================
+
+monthly_data = df['meantemp'].resample('ME').mean()
+
+plt.figure(figsize=(10,5))
+plt.plot(monthly_data)
+plt.title("Monthly Average Temperature")
+plt.xlabel("Date")
+plt.ylabel("Temperature")
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 6: Rolling Mean (Moving Average)
+# ============================================
+
+rolling_mean = df['meantemp'].rolling(window=30).mean()
+
+plt.figure(figsize=(10,5))
+plt.plot(df['meantemp'], label='Original')
+plt.plot(rolling_mean, label='Rolling Mean (30 days)')
+plt.legend()
+plt.title("Rolling Mean Analysis")
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 7: Rolling Std (Stability Check)
+# ============================================
+
+rolling_std = df['meantemp'].rolling(window=30).std()
+
+plt.figure(figsize=(10,5))
+plt.plot(rolling_std)
+plt.title("Rolling Standard Deviation")
+plt.grid()
+plt.show()
+
+# ============================================
+# Step 8: Decomposition (Trend, Seasonality)
+# ============================================
+
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+decomposition = seasonal_decompose(df['meantemp'], model='additive')
+
+decomposition.plot()
+plt.show()
+
+# ============================================
+# Step 9: Final Combined Plot
+# ============================================
+
+plt.figure(figsize=(12,6))
+plt.plot(df['meantemp'], label='Original')
+plt.plot(rolling_mean, label='Rolling Mean')
+plt.title("Final Time Series Visualization")
+plt.legend()
+plt.grid()
+plt.show()
+
+# ============================================
+# END
+# ============================================
